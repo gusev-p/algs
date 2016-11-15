@@ -9,26 +9,27 @@ namespace Algs.Tasks.SimpleDataStructures
 
         public void Enqueue(T value)
         {
-            PumpStack(stackOldestOnTop, stackNewestOnTop);
             stackNewestOnTop.Push(value);
         }
 
         public T Peek()
         {
-            PumpStack(stackNewestOnTop, stackOldestOnTop);
+            PrepareOldestStack();
             return stackOldestOnTop.Peek();
         }
 
         public T Dequeue()
         {
-            PumpStack(stackNewestOnTop, stackOldestOnTop);
+            PrepareOldestStack();
             return stackOldestOnTop.Pop();
         }
 
-        private static void PumpStack(Stack<T> source, Stack<T> target)
+        private void PrepareOldestStack()
         {
-            while (source.Count > 0)
-                target.Push(source.Pop());
+            if (stackOldestOnTop.Count > 0)
+                return;
+            while (stackNewestOnTop.Count > 0)
+                stackOldestOnTop.Push(stackNewestOnTop.Pop());
         }
     }
 }
