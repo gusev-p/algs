@@ -6,7 +6,7 @@ namespace Algs.Tasks.Arrays
     {
         public static int FindMaxItemIndex(int[] array)
         {
-            int maxIndex = 0;
+            var maxIndex = 0;
             long max = array[0];
             for (var i = 1; i < array.Length; i++)
             {

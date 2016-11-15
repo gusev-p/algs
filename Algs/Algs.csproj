@@ -39,11 +39,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -52,7 +47,6 @@
     <Compile Include="Tasks\Arrays\MaxSubArrayFinder.cs" />
     <Compile Include="Tasks\Complex\DataUploader.cs" />
     <Compile Include="Tasks\DynProg\CoinsCounter.cs" />
-    <Compile Include="Tasks\DynProg\CoinsCounter3.cs" />
     <Compile Include="Tasks\DynProg\NikitaAndTheGame.cs" />
     <Compile Include="Tasks\GraphAlg\BFSShortestReach.cs" />
     <Compile Include="Tasks\GraphAlg\MaxRegionFinder.cs" />
