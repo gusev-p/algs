@@ -28,9 +28,10 @@ namespace Algs.Tests.Tasks
         [Test]
         public void Zzz66()
         {
-            var g = CreateCycleOfLength(4);
-            var mstWeight = PrimMSTSpecialSubtree.PrimMSTAlgorithm.GetMSTWeight(g, 1);
-            Console.Out.WriteLine(mstWeight);
+            var s1 = "dkhc";
+            var s2 = "ckhd";
+            var r = StringComparer.OrdinalIgnoreCase.Compare(s1, s2);
+            Console.Out.WriteLine(r < 0 ? "first smaller" : "first not smaller");
         }
 
         [Test]

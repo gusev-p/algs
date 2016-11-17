@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.GraphAlg;
+﻿using Algs.Tasks.Strings;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            PrimMSTSpecialSubtree.TaskMain();
+            BiggerIsGreater.TaskMain();
         }
     }
 }
