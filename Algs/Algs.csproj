@@ -47,6 +47,7 @@
     <Compile Include="Tasks\Arrays\MaximumSubarraySum.cs" />
     <Compile Include="Tasks\Arrays\MaxSubArrayFinder.cs" />
     <Compile Include="Tasks\Arrays\MissingNumbers.cs" />
+    <Compile Include="Tasks\Arrays\TheBombermanGame.cs" />
     <Compile Include="Tasks\Complex\DataUploader.cs" />
     <Compile Include="Tasks\DynProg\CoinsCounter.cs" />
     <Compile Include="Tasks\DynProg\NikitaAndTheGame.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Tasks\Graphics\Point.cs" />
     <Compile Include="Tasks\Heaps\Heap.cs" />
     <Compile Include="Tasks\Heaps\MedianCounter.cs" />
+    <Compile Include="Tasks\Numbers\AbsolutePermutation.cs" />
     <Compile Include="Tasks\Numbers\KaratsubaMultiplier.cs" />
     <Compile Include="Tasks\Numbers\PrimalityChecker.cs" />
     <Compile Include="Tasks\Numbers\StairsChecker.cs" />

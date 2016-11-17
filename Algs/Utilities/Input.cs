@@ -23,5 +23,10 @@ namespace Algs.Utilities
         {
             return Console.ReadLine().Split(' ');
         }
+
+        public static char[] ReadChars()
+        {
+            return Console.ReadLine().ToCharArray();
+        }
     }
 }

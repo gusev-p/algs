@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Strings;
+﻿using Algs.Tasks.Arrays;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            BiggerIsGreater.TaskMain();
+            TheBombermanGame.TaskMain();
         }
     }
 }
