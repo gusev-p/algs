@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Algs.Tasks.Sorting;
-using Algs.Utilities;
+using Algs.TestUtilities;
 using NUnit.Framework;
 
 namespace Algs.Tests.Tasks

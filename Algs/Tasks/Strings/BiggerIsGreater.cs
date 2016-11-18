@@ -1,5 +1,5 @@
 ﻿using System;
-using Algs.Utilities;
+using Algs.TestUtilities;
 
 namespace Algs.Tasks.Strings
 {

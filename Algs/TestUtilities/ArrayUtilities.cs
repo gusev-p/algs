@@ -1,8 +1,8 @@
 using System;
 
-namespace Algs.Utilities
+namespace Algs.TestUtilities
 {
-    public static class ArrayHelpers
+    public static class ArrayUtilities
     {
         public static T[] Copy<T>(this T[] array)
         {

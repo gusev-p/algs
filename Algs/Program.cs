@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Arrays;
+﻿using Algs.Tasks.Heaps;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            TheBombermanGame.TaskMain();
+            MinimumAverageWaitingTime.TaskMain();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Algs.Utilities
+namespace Algs.TestUtilities
 {
     public static class Input
     {

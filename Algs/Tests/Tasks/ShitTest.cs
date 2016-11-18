@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
@@ -7,7 +8,6 @@ using Algs.Tasks.GraphAlg;
 using Algs.Tasks.Numbers;
 using Algs.Tasks.Sorting;
 using NUnit.Framework;
-using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Algs.Tests.Tasks
 {
@@ -20,9 +20,29 @@ namespace Algs.Tests.Tasks
             var zzz = File.ReadAllLines(
                 @"C:\sources\knopka.statistics\_Modules\ConsoleApplication1\ConsoleApplication1\bin\Debug\input2");
             var sum = 0;
-            for(var i = 0; i < zzz.Length - 1;i++)
+            for (var i = 0; i < zzz.Length - 1; i++)
                 sum += int.Parse(zzz[i].Split(' ')[2]);
             Console.Out.WriteLine(sum);
+        }
+
+        [Test]
+        public void xxx()
+        {
+            var m = new int[16, 16];
+            long counter = 0;
+            var s = Stopwatch.StartNew();
+            var limit = (long) Math.Pow(2, 24);
+            while (counter < limit)
+            {
+                for (var i = 0; i < m.GetLength(0); i++)
+                    for (var j = 0; j < m.GetLength(1); j++)
+                    {
+                        m[i, j]++;
+                        counter++;
+                    }
+            }
+            s.Stop();
+            Console.Out.WriteLine("elapsed [{0}] millis", s.ElapsedMilliseconds);
         }
 
         [Test]
@@ -41,7 +61,7 @@ namespace Algs.Tests.Tasks
             for (var i = 4; i < maxCycleLength; i++)
             {
                 var g = CreateCycleOfLength(i);
-                var expectedWeight = (i - 1) * i / 2 * 100;
+                var expectedWeight = (i - 1)*i/2*100;
                 for (var j = 0; j < g.NodesCount; j++)
                 {
                     var mstWeight = PrimMSTSpecialSubtree.PrimMSTAlgorithm.GetMSTWeight(g, j);
@@ -52,7 +72,9 @@ namespace Algs.Tests.Tasks
                         Assert.Fail();
                     }
                 }
-                File.WriteAllText(@"C:\sources\knopka.statistics\_Modules\ConsoleApplication1\ConsoleApplication1\bin\Debug\hujResult", i.ToString());
+                File.WriteAllText(
+                    @"C:\sources\knopka.statistics\_Modules\ConsoleApplication1\ConsoleApplication1\bin\Debug\hujResult",
+                    i.ToString());
             }
         }
 
@@ -73,7 +95,7 @@ namespace Algs.Tests.Tasks
             Console.Out.WriteLine(Math.Pow(10, 9));
             checked
             {
-                Console.Out.WriteLine(((long)Math.Pow(10, 9)) * 16384);    
+                Console.Out.WriteLine(((long) Math.Pow(10, 9))*16384);
             }
         }
 
@@ -134,10 +156,10 @@ namespace Algs.Tests.Tasks
                 var testResult = MaxSubArrayFinder.FindMaxSubArray(array);
                 var maxLeft = -1;
                 var maxRight = -1;
-                long maxSum = long.MinValue;
+                var maxSum = long.MinValue;
                 for (var j = 0; j < array.Length; j++)
                 {
-                    if(array[j] == 0)
+                    if (array[j] == 0)
                         continue;
                     for (var k = j; k < array.Length; k++)
                     {
@@ -185,7 +207,7 @@ namespace Algs.Tests.Tasks
             var n1 = BigInteger.Parse(s1);
             var n2 = BigInteger.Parse(s2);
             s = Stopwatch.StartNew();
-            var etalon = n1 * n2;
+            var etalon = n1*n2;
             s.Stop();
             Console.Out.WriteLine("their took {0} millis", s.ElapsedMilliseconds);
             Assert.That(result, Is.EqualTo(etalon.ToString()));

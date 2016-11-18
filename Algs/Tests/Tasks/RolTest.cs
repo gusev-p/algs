@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Algs.Tasks.Rol;
-using Algs.Utilities;
+using Algs.TestUtilities;
 using NUnit.Framework;
 
 namespace Algs.Tests.Tasks

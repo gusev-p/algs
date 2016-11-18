@@ -1,4 +1,4 @@
-﻿using Algs.Utilities;
+﻿using Algs.Core;
 
 namespace Algs.Tasks.Rol
 {

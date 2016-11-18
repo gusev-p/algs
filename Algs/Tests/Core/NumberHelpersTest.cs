@@ -1,7 +1,7 @@
-﻿using Algs.Utilities;
+﻿using Algs.Core;
 using NUnit.Framework;
 
-namespace Algs.Tests.Utilities
+namespace Algs.Tests.Core
 {
     [TestFixture]
     public class NumberHelpersTest

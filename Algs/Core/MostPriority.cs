@@ -1,4 +1,4 @@
-namespace Algs.Utilities
+namespace Algs.Core
 {
     public enum MostPriority
     {
