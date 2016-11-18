@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Algs.Core;
 using Algs.TestUtilities;
 using NUnit.Framework;
@@ -27,9 +26,9 @@ namespace Algs.Tests.Core
                 var right = index;
                 while (right < array.Length - 1 && array[right + 1] == v)
                     right++;
-                var testLeft = array.BinarySearch(v, Comparer<int>.Default, Occurence.First);
+                var testLeft = array.BinarySearch(v);
                 Assert.That(testLeft, Is.EqualTo(left));
-                var testRight = array.BinarySearch(v, Comparer<int>.Default, Occurence.Last);
+                var testRight = array.BinarySearch(v, Occurence.Last);
                 Assert.That(testRight, Is.EqualTo(right));
                 if (right - left > 0)
                     moreThanOneCount++;

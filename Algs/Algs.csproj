@@ -62,7 +62,6 @@
     <Compile Include="Tasks\GraphAlg\PrimMSTSpecialSubtree.cs" />
     <Compile Include="Tasks\Graphics\ClosestsPointersFinder.cs" />
     <Compile Include="Tasks\Graphics\Point.cs" />
-    <Compile Include="Tasks\Heaps\Heap.cs" />
     <Compile Include="Tasks\Heaps\MedianCounter.cs" />
     <Compile Include="Tasks\Heaps\MinimumAverageWaitingTime.cs" />
     <Compile Include="Tasks\Numbers\AbsolutePermutation.cs" />

@@ -4,8 +4,11 @@ namespace Algs.Core
 {
     public static class ArrayHelpers
     {
-        public static int BinarySearch<T>(this T[] array, T item, IComparer<T> comparer, Occurence occurence)
+        public static int BinarySearch<T>(this T[] array, T item,
+            Occurence occurence = Occurence.First,
+            IComparer<T> comparer = null)
         {
+            comparer = comparer ?? Comparer<T>.Default;
             var left = 0;
             var right = array.Length - 1;
             var result = -1;

@@ -18,12 +18,12 @@ namespace Algs.Tasks.Arrays
             {
                 var s = Console.ReadLine();
                 int count;
-                var first = strings.BinarySearch(s, StringComparer.Ordinal, Occurence.First);
+                var first = strings.BinarySearch(s, Occurence.First, StringComparer.Ordinal);
                 if (first == -1)
                     count = 0;
                 else
                 {
-                    var last = strings.BinarySearch(s, StringComparer.Ordinal, Occurence.Last);
+                    var last = strings.BinarySearch(s, Occurence.Last, StringComparer.Ordinal);
                     count = last - first + 1;
                 }
                 Console.WriteLine(count);

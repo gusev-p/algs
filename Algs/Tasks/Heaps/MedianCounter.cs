@@ -1,26 +1,28 @@
+using Algs.Core;
+
 namespace Algs.Tasks.Heaps
 {
     public class MedianCounter
     {
-        private readonly Heap maxHeap;
-        private readonly Heap minHeap;
+        private readonly PriorityQueue<int> maxHeap;
+        private readonly PriorityQueue<int> minHeap;
 
         public MedianCounter(int maxCount)
         {
-            maxHeap = new Heap(maxCount, true);
-            minHeap = new Heap(maxCount, false);
+            maxHeap = PriorityQueue<int>.Max(maxCount);
+            minHeap = PriorityQueue<int>.Min(maxCount);
         }
 
         public void Add(int value)
         {
             if (value <= Median)
-                maxHeap.Add(value);
+                maxHeap.Insert(value);
             else
-                minHeap.Add(value);
+                minHeap.Insert(value);
             if (maxHeap.Count > minHeap.Count + 1)
-                minHeap.Add(maxHeap.ExtractTop());
+                minHeap.Insert(maxHeap.ExtractTop());
             else if (minHeap.Count > maxHeap.Count + 1)
-                maxHeap.Add(minHeap.ExtractTop());
+                maxHeap.Insert(minHeap.ExtractTop());
             if (maxHeap.Count == minHeap.Count)
                 Median = ((double) minHeap.Top + maxHeap.Top)/2;
             else if (maxHeap.Count > minHeap.Count)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Algs.Core
 {
@@ -12,6 +13,34 @@ namespace Algs.Core
         {
             this.prioritizer = prioritizer;
             values = new T[maxItemsCount + 1];
+        }
+
+        public static PriorityQueue<T> Min(int maxItemsCount, IComparer<T> comparer = null)
+        {
+            comparer = comparer ?? Comparer<T>.Default;
+            return new PriorityQueue<T>(maxItemsCount, delegate(T v1, T v2)
+            {
+                var cmp = comparer.Compare(v1, v2);
+                if (cmp < 0)
+                    return MostPriority.First;
+                if (cmp > 0)
+                    return MostPriority.Second;
+                return MostPriority.Both;
+            });
+        }
+
+        public static PriorityQueue<T> Max(int maxItemsCount, IComparer<T> comparer = null)
+        {
+            comparer = comparer ?? Comparer<T>.Default;
+            return new PriorityQueue<T>(maxItemsCount, delegate(T v1, T v2)
+            {
+                var cmp = comparer.Compare(v1, v2);
+                if (cmp > 0)
+                    return MostPriority.First;
+                if (cmp < 0)
+                    return MostPriority.Second;
+                return MostPriority.Both;
+            });
         }
 
         public int Count { get; private set; }
@@ -36,6 +65,11 @@ namespace Algs.Core
                 Exchange(parentIndex, index);
                 index = parentIndex;
             }
+        }
+
+        public T Top
+        {
+            get { return values[1]; }
         }
 
         public T ExtractTop()
