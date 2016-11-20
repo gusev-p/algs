@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Heaps;
+﻿using Algs.Tasks.Segments;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            MinimumAverageWaitingTime.TaskMain();
+            KindergartenAdventures.TaskMain();
         }
     }
 }

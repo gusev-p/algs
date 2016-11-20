@@ -70,6 +70,7 @@
     <Compile Include="Tasks\Numbers\StairsChecker.cs" />
     <Compile Include="Tasks\Rol\RolInplace.cs" />
     <Compile Include="Tasks\Rol\RolSimple.cs" />
+    <Compile Include="Tasks\Segments\KindergartenAdventures.cs" />
     <Compile Include="Tasks\SimpleDataStructures\MyQueue.cs" />
     <Compile Include="Tasks\Sorting\InsertionSorter.cs" />
     <Compile Include="Tasks\Sorting\Inversions.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Tasks\Strings\ReduceStringsTask.cs" />
     <Compile Include="Tasks\Strings\SimilarStringsTask.cs" />
     <Compile Include="Tasks\Strings\StringConstructionTask.cs" />
+    <Compile Include="Core\AVLTree.cs" />
     <Compile Include="Tasks\Tries\Trie.cs" />
     <Compile Include="Tests\Core\ArrayHelpersTest.cs" />
     <Compile Include="Tests\Tasks\MedianCounterTest.cs" />
