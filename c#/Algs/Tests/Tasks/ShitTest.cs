@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using Algs.Tasks.Arrays;
@@ -17,12 +18,12 @@ namespace Algs.Tests.Tasks
         [Test]
         public void Shit2()
         {
-            var zzz = File.ReadAllLines(
-                @"C:\sources\knopka.statistics\_Modules\ConsoleApplication1\ConsoleApplication1\bin\Debug\input2");
-            var sum = 0;
-            for (var i = 0; i < zzz.Length - 1; i++)
-                sum += int.Parse(zzz[i].Split(' ')[2]);
-            Console.Out.WriteLine(sum);
+            var a = "841 315 752 544 437 646 165 718 773 798 872 329 602 726 687 476 664 631 672 474 724 313"
+                .Split(' ')
+                .Select(int.Parse)
+                .ToArray();
+            Array.Sort(a);
+            Console.Out.WriteLine(string.Join(" ", a));
         }
 
         [Test]
