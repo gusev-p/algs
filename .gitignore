@@ -10,3 +10,4 @@ packages/
 *.designer.cs
 *.Designer.cs
 **/input
+**/*.class
