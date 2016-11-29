@@ -18,12 +18,8 @@ namespace Algs.Tests.Tasks
         [Test]
         public void Shit2()
         {
-            var a = "841 315 752 544 437 646 165 718 773 798 872 329 602 726 687 476 664 631 672 474 724 313"
-                .Split(' ')
-                .Select(int.Parse)
-                .ToArray();
-            Array.Sort(a);
-            Console.Out.WriteLine(string.Join(" ", a));
+            Console.Out.WriteLine(123.ToString()[0]);
+            
         }
 
         [Test]
