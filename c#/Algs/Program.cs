@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            QHeap1.TaskMain();
+            JesseAndCookies.TaskMain();
         }
     }
 }
