@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            KargerMinCut.TaskMain();
+            Scc.TaskMain();
         }
     }
 }
