@@ -11,7 +11,7 @@ namespace Algs.TestUtilities
 
         public static int[] ReadInts()
         {
-            return Array.ConvertAll(ReadStrings(), int.Parse);
+            return Array.ConvertAll(ReadStrings(), s => int.Parse(s.Trim()));
         }
 
         public static long[] ReadLongs()
@@ -21,7 +21,7 @@ namespace Algs.TestUtilities
 
         public static string[] ReadStrings()
         {
-            return Console.ReadLine().Split(' ');
+            return Console.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static char[] ReadChars()
