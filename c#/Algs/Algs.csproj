@@ -54,6 +54,7 @@
     <Compile Include="Tasks\Arrays\SparseArrays.cs" />
     <Compile Include="Tasks\Arrays\TheBombermanGame.cs" />
     <Compile Include="Tasks\Complex\DataUploader.cs" />
+    <Compile Include="Tasks\DisjointSets\KunduAndTree.cs" />
     <Compile Include="Tasks\DisjointSets\MergingCommunities.cs" />
     <Compile Include="Tasks\DynProg\CoinsCounter.cs" />
     <Compile Include="Tasks\DynProg\FairCut.cs" />

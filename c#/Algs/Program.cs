@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.GraphAlg;
+﻿using Algs.Tasks.DisjointSets;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            ComponentsInAGraph.TaskMain();
+            KunduAndTree.TaskMain();
         }
     }
 }
