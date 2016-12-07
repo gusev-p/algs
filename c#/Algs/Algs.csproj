@@ -56,6 +56,7 @@
     <Compile Include="Tasks\Complex\DataUploader.cs" />
     <Compile Include="Tasks\DisjointSets\KunduAndTree.cs" />
     <Compile Include="Tasks\DisjointSets\MergingCommunities.cs" />
+    <Compile Include="Tasks\DisjointSets\SuperMaximumCostQueries.cs" />
     <Compile Include="Tasks\DynProg\CoinsCounter.cs" />
     <Compile Include="Tasks\DynProg\FairCut.cs" />
     <Compile Include="Tasks\DynProg\MandragoraForest.cs" />
