@@ -38,6 +38,7 @@ namespace Algs.Tasks.DisjointSets
             private readonly int[] weights;
             private readonly List<int>[] outgoing;
             private readonly Edge[] edges;
+            private readonly TopSortDescriptor[] topSort;
 
             public TreePathsSearcher(Edge[] edges)
             {
@@ -55,6 +56,8 @@ namespace Algs.Tasks.DisjointSets
                 weights = new int[edges.Length];
                 for (var i = 0; i < edges.Length; i++)
                     weights[i] = edges[i].weight;
+                topSort = new TopSortDescriptor[edges.Length + 1];
+                new TopSorter(topSort, outgoing, edges).TopSort();
             }
 
             public ulong CountPathsWithCostBetween(int l, int r)
@@ -62,43 +65,7 @@ namespace Algs.Tasks.DisjointSets
                 var redBlackTree = BuildRedBlackTree(l, r);
                 return redBlackTree == null
                     ? 0
-                    : CalculatePathsCount(redBlackTree, l);
-            }
-
-            private ulong CalculatePathsCount(RedBlackTree redBlackTree, int l)
-            {
-                ulong result = 0;
-                var stack = new Stack<UFNode>();
-                var processed = new HashSet<UFNode>();
-                foreach (var root in redBlackTree.roots)
-                {
-                    if (!processed.Add(root))
-                        continue;
-                    ulong processedSize = root.size;
-                    ulong treeCount = (root.size + 1)*root.size/2;
-                    stack.Push(root);
-                    while (stack.Count > 0)
-                    {
-                        var e = stack.Pop();
-                        Dictionary<UFNode, uint> adjacent;
-                        if (!redBlackTree.outgoing.TryGetValue(e, out adjacent))
-                            continue;
-                        foreach (var x in adjacent)
-                        {
-                            if (!processed.Add(x.Key))
-                                continue;
-                            stack.Push(x.Key);
-                            var xIsRed = weights[x.Key.edge] >= l;
-                            var size = x.Key.size;
-                            result += processedSize*size*x.Value;
-                            if (xIsRed)
-                                result += (size + 1)*size/2;
-                            processedSize += size;
-                        }
-                    }
-                    result += treeCount;
-                }
-                return result;
+                    : redBlackTree.CalculatePathsCount();
             }
 
             private RedBlackTree BuildRedBlackTree(int l, int r)
@@ -107,7 +74,7 @@ namespace Algs.Tasks.DisjointSets
                 var last = FindLastSmallerOrEqual(weights, r);
                 if (last < first || last < 0)
                     return null;
-                var stack = new Stack<int>();
+                var stack = new Stack<StackItem>();
                 var processed = new Dictionary<int, UFNode>();
                 var links = new List<Link>();
                 var roots = new UFNode[last - first + 1];
@@ -119,15 +86,28 @@ namespace Algs.Tasks.DisjointSets
                         roots[i - first] = n;
                         continue;
                     }
-                    n = UFNode.CreateNew(i);
+                    processed.Add(i, n = UFNode.CreateNew(Color.Red, 1));
                     roots[i - first] = n;
-                    processed.Add(i, n);
                     var e = edges[i];
-                    stack.Push(e.v1);
+                    stack.Push(new StackItem {v = e.v1, edge = e, node = n});
+                    stack.Push(new StackItem {v = e.v2, edge = e, node = n});
                     while (stack.Count > 0)
                     {
-                        var v = stack.Pop();
-                        var adjacent = outgoing[v];
+                        var item = stack.Pop();
+                        var topSortItem = topSort[item.v];
+                        var isDownEdge = topSortItem.number <= topSort[item.edge.v1].number &&
+                                         topSortItem.number <= topSort[item.edge.v2].number;
+                        if (isDownEdge && topSortItem.count > 0 && topSortItem.max < l)
+                        {
+                            Console.Out.WriteLine("shit heuristic used!!!");
+                            var newNode = UFNode.CreateNew(Color.Black, topSortItem.count);
+                            if (item.node.color == Color.Black)
+                                item.node.Union(newNode);
+                            else
+                                links.Add(new Link {e1 = item.node, e2 = newNode});
+                            continue;
+                        }
+                        var adjacent = outgoing[item.v];
                         UFNode redNode = null;
                         UFNode blackNode = null;
                         foreach (var t in adjacent)
@@ -135,14 +115,19 @@ namespace Algs.Tasks.DisjointSets
                             if (weights[t] > r)
                                 continue;
                             e = edges[t];
+                            var color = weights[t] >= l ? Color.Red : Color.Black;
                             UFNode node;
                             if (!processed.TryGetValue(t, out node))
                             {
-                                stack.Push(v == e.v1 ? e.v2 : e.v1);
-                                processed.Add(t, node = UFNode.CreateNew(t));
+                                processed.Add(t, node = UFNode.CreateNew(color, 1));
+                                stack.Push(new StackItem
+                                {
+                                    edge = e,
+                                    node = node,
+                                    v = e.v1 == item.v ? e.v2 : e.v1
+                                });
                             }
-                            var isRed = weights[t] >= l;
-                            if (isRed)
+                            if (color == Color.Red)
                             {
                                 if (redNode == null)
                                     redNode = node;
@@ -218,18 +203,18 @@ namespace Algs.Tasks.DisjointSets
 
         private class UFNode
         {
-            public int edge;
+            public Color color;
             private UFNode parent;
             public uint size;
             private int rank;
 
-            public static UFNode CreateNew(int edge)
+            public static UFNode CreateNew(Color color, uint size)
             {
                 var result = new UFNode
                 {
-                    size = 1,
+                    size = size,
                     rank = 0,
-                    edge = edge
+                    color = color
                 };
                 result.parent = result;
                 return result;
@@ -273,9 +258,9 @@ namespace Algs.Tasks.DisjointSets
 
         private class RedBlackTree
         {
-            public readonly UFNode[] roots;
+            private readonly UFNode[] roots;
 
-            public readonly Dictionary<UFNode, Dictionary<UFNode, uint>> outgoing =
+            private readonly Dictionary<UFNode, Dictionary<UFNode, uint>> outgoing =
                 new Dictionary<UFNode, Dictionary<UFNode, uint>>();
 
             public RedBlackTree(UFNode[] roots)
@@ -294,6 +279,48 @@ namespace Algs.Tasks.DisjointSets
                 else
                     adjacent.Add(e2, 1);
             }
+
+            public ulong CalculatePathsCount()
+            {
+                ulong result = 0;
+                var stack = new Stack<UFNode>();
+                var processed = new HashSet<UFNode>();
+                foreach (var root in roots)
+                {
+                    if (!processed.Add(root))
+                        continue;
+                    ulong processedSize = root.size;
+                    ulong treeCount = (root.size + 1)*root.size/2;
+                    stack.Push(root);
+                    while (stack.Count > 0)
+                    {
+                        var e = stack.Pop();
+                        Dictionary<UFNode, uint> adjacent;
+                        if (!outgoing.TryGetValue(e, out adjacent))
+                            continue;
+                        foreach (var x in adjacent)
+                        {
+                            if (!processed.Add(x.Key))
+                                continue;
+                            stack.Push(x.Key);
+                            var xIsRed = x.Key.color == Color.Red;
+                            var size = x.Key.size;
+                            result += processedSize*size*x.Value;
+                            if (xIsRed)
+                                result += (size + 1)*size/2;
+                            processedSize += size;
+                        }
+                    }
+                    result += treeCount;
+                }
+                return result;
+            }
+        }
+
+        private enum Color
+        {
+            Black,
+            Red
         }
 
         private class Link
@@ -304,9 +331,8 @@ namespace Algs.Tasks.DisjointSets
 
         private class TopSortDescriptor
         {
-            public int low;
-            public int high;
-            public int count;
+            public int max;
+            public uint count;
             public int number;
         }
 
@@ -315,6 +341,61 @@ namespace Algs.Tasks.DisjointSets
             public int v1;
             public int v2;
             public int weight;
+        }
+
+        private class TopSorter
+        {
+            private readonly TopSortDescriptor[] descriptors;
+            private readonly List<int>[] outgoing;
+            private readonly Edge[] edges;
+            private int lastNumber;
+
+            public TopSorter(TopSortDescriptor[] descriptors, List<int>[] outgoing, Edge[] edges)
+            {
+                this.descriptors = descriptors;
+                this.outgoing = outgoing;
+                this.edges = edges;
+            }
+
+            public void TopSort()
+            {
+                var random = new Random();
+                var root = random.Next(descriptors.Length);
+                Visit(root, -1);
+            }
+
+            private void Visit(int parent, int grandParent)
+            {
+                var adjacent = outgoing[parent];
+                var parentDescriptor = descriptors[parent] = new TopSortDescriptor
+                {
+                    max = -1,
+                    count = 0
+                };
+                foreach (var x in adjacent)
+                {
+                    var edge = edges[x];
+                    var child = edge.v1 == parent ? edge.v2 : edge.v1;
+                    if (child == grandParent)
+                        continue;
+                    Visit(child, parent);
+                    var childDescriptor = descriptors[child];
+                    var childMax = edge.weight > childDescriptor.max
+                        ? edge.weight
+                        : childDescriptor.max;
+                    if (childMax > parentDescriptor.max)
+                        parentDescriptor.max = childMax;
+                    parentDescriptor.count += childDescriptor.count + 1;
+                }
+                parentDescriptor.number = lastNumber++;
+            }
+        }
+
+        private struct StackItem
+        {
+            public int v;
+            public Edge edge;
+            public UFNode node;
         }
     }
 }
