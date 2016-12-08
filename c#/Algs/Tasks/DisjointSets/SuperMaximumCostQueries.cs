@@ -35,10 +35,10 @@ namespace Algs.Tasks.DisjointSets
 
         private class TreePathsSearcher
         {
-            private readonly int[] weights;
             private readonly List<int>[] outgoing;
             private readonly Edge[] edges;
-            private readonly TopSortDescriptor[] topSort;
+            private readonly TopSortItem[] topSort;
+            private readonly int root;
 
             public TreePathsSearcher(Edge[] edges)
             {
@@ -46,159 +46,22 @@ namespace Algs.Tasks.DisjointSets
                 outgoing = new List<int>[edges.Length + 1];
                 for (var i = 0; i < outgoing.Length; i++)
                     outgoing[i] = new List<int>();
-                Array.Sort(edges, (e1, e2) => e1.weight.CompareTo(e2.weight));
                 for (var i = 0; i < edges.Length; i++)
                 {
                     var edge = edges[i];
                     outgoing[edge.v1].Add(i);
                     outgoing[edge.v2].Add(i);
                 }
-                weights = new int[edges.Length];
-                for (var i = 0; i < edges.Length; i++)
-                    weights[i] = edges[i].weight;
-                topSort = new TopSortDescriptor[edges.Length + 1];
-                new TopSorter(topSort, outgoing, edges).TopSort();
+                topSort = new TopSortItem[edges.Length + 1];
+                root = new CenterFinder(outgoing, edges).Find();
+                new TopSorter(topSort, outgoing, edges).TopSort(root);
             }
 
             public ulong CountPathsWithCostBetween(int l, int r)
             {
-                var redBlackTree = BuildRedBlackTree(l, r);
-                return redBlackTree == null
-                    ? 0
-                    : redBlackTree.CalculatePathsCount();
+                var builder = new RedBlackTreeBuilder(l, r, outgoing, edges, topSort, root);
+                return builder.Build().CalculatePathsCount();
             }
-
-            private RedBlackTree BuildRedBlackTree(int l, int r)
-            {
-                var first = FindFirstGreaterOrEqual(weights, l);
-                var last = FindLastSmallerOrEqual(weights, r);
-                if (last < first || last < 0)
-                    return null;
-                var stack = new Stack<StackItem>();
-                var processed = new Dictionary<int, UFNode>();
-                var links = new List<Link>();
-                var roots = new UFNode[last - first + 1];
-                for (var i = first; i <= last; i++)
-                {
-                    UFNode n;
-                    if (processed.TryGetValue(i, out n))
-                    {
-                        roots[i - first] = n;
-                        continue;
-                    }
-                    processed.Add(i, n = UFNode.CreateNew(Color.Red, 1));
-                    roots[i - first] = n;
-                    var e = edges[i];
-                    stack.Push(new StackItem {v = e.v1, edge = e, node = n});
-                    stack.Push(new StackItem {v = e.v2, edge = e, node = n});
-                    while (stack.Count > 0)
-                    {
-                        var item = stack.Pop();
-                        var topSortItem = topSort[item.v];
-                        var isDownEdge = topSortItem.number <= topSort[item.edge.v1].number &&
-                                         topSortItem.number <= topSort[item.edge.v2].number;
-                        if (isDownEdge && topSortItem.count > 0 && topSortItem.max < l)
-                        {
-                            Console.Out.WriteLine("shit heuristic used!!!");
-                            var newNode = UFNode.CreateNew(Color.Black, topSortItem.count);
-                            if (item.node.color == Color.Black)
-                                item.node.Union(newNode);
-                            else
-                                links.Add(new Link {e1 = item.node, e2 = newNode});
-                            continue;
-                        }
-                        var adjacent = outgoing[item.v];
-                        UFNode redNode = null;
-                        UFNode blackNode = null;
-                        foreach (var t in adjacent)
-                        {
-                            if (weights[t] > r)
-                                continue;
-                            e = edges[t];
-                            var color = weights[t] >= l ? Color.Red : Color.Black;
-                            UFNode node;
-                            if (!processed.TryGetValue(t, out node))
-                            {
-                                processed.Add(t, node = UFNode.CreateNew(color, 1));
-                                stack.Push(new StackItem
-                                {
-                                    edge = e,
-                                    node = node,
-                                    v = e.v1 == item.v ? e.v2 : e.v1
-                                });
-                            }
-                            if (color == Color.Red)
-                            {
-                                if (redNode == null)
-                                    redNode = node;
-                                else
-                                    redNode.Union(node);
-                            }
-                            else if (blackNode == null)
-                                blackNode = node;
-                            else
-                                blackNode.Union(node);
-                        }
-                        if (blackNode != null && redNode != null)
-                            links.Add(new Link
-                            {
-                                e1 = blackNode,
-                                e2 = redNode
-                            });
-                    }
-                }
-                for (var i = 0; i < roots.Length; i++)
-                    roots[i] = roots[i].Find();
-                var result = new RedBlackTree(roots);
-                foreach (var link in links)
-                {
-                    var r1 = link.e1.Find();
-                    var r2 = link.e2.Find();
-                    result.Include(r1, r2);
-                    result.Include(r2, r1);
-                }
-                return result;
-            }
-        }
-
-        public static int FindFirstGreaterOrEqual(int[] array, int target)
-        {
-            var left = 0;
-            var right = array.Length - 1;
-            var result = -1;
-            while (left <= right)
-            {
-                var mid = left + (right - left)/2;
-                var midValue = array[mid];
-                if (target <= midValue)
-                {
-                    right = mid - 1;
-                    result = mid;
-                }
-                else
-                    left = mid + 1;
-            }
-            return result;
-        }
-
-        public static int FindLastSmallerOrEqual(int[] array, int target)
-        {
-            var left = 0;
-            var right = array.Length - 1;
-            var result = -1;
-            while (left <= right)
-            {
-                var mid = left + (right - left)/2;
-                var midValue = array[mid];
-                if (target < midValue)
-                    right = mid - 1;
-                else
-                {
-                    result = mid;
-                    left = mid + 1;
-                }
-            }
-            return result;
         }
 
         private class UFNode
@@ -258,12 +121,12 @@ namespace Algs.Tasks.DisjointSets
 
         private class RedBlackTree
         {
-            private readonly UFNode[] roots;
+            private readonly List<UFNode> roots;
 
             private readonly Dictionary<UFNode, Dictionary<UFNode, uint>> outgoing =
                 new Dictionary<UFNode, Dictionary<UFNode, uint>>();
 
-            public RedBlackTree(UFNode[] roots)
+            public RedBlackTree(List<UFNode> roots)
             {
                 this.roots = roots;
             }
@@ -325,15 +188,8 @@ namespace Algs.Tasks.DisjointSets
 
         private class Link
         {
-            public UFNode e1;
-            public UFNode e2;
-        }
-
-        private class TopSortDescriptor
-        {
-            public int max;
-            public uint count;
-            public int number;
+            public UFNode n1;
+            public UFNode n2;
         }
 
         private class Edge
@@ -343,33 +199,196 @@ namespace Algs.Tasks.DisjointSets
             public int weight;
         }
 
-        private class TopSorter
+        private class RedBlackTreeBuilder
         {
-            private readonly TopSortDescriptor[] descriptors;
+            private readonly List<Link> links = new List<Link>();
+            private readonly List<UFNode> roots = new List<UFNode>();
+            private readonly int l;
+            private readonly int r;
             private readonly List<int>[] outgoing;
             private readonly Edge[] edges;
-            private int lastNumber;
+            private readonly TopSortItem[] topSort;
+            private readonly int root;
 
-            public TopSorter(TopSortDescriptor[] descriptors, List<int>[] outgoing, Edge[] edges)
+            public RedBlackTreeBuilder(int l, int r,
+                List<int>[] outgoing, Edge[] edges,
+                TopSortItem[] topSort, int root)
             {
-                this.descriptors = descriptors;
+                this.l = l;
+                this.r = r;
+                this.outgoing = outgoing;
+                this.edges = edges;
+                this.topSort = topSort;
+                this.root = root;
+            }
+
+            public RedBlackTree Build()
+            {
+                Visit(root, -1, null);
+                for (var i = 0; i < roots.Count; i++)
+                    roots[i] = roots[i].Find();
+                var result = new RedBlackTree(roots);
+                foreach (var link in links)
+                {
+                    var r1 = link.n1.Find();
+                    var r2 = link.n2.Find();
+                    result.Include(r1, r2);
+                    result.Include(r2, r1);
+                }
+                return result;
+            }
+
+            private void Visit(int parent, int parentEdge, UFNode parentNode)
+            {
+                var topSortItem = topSort[parent];
+                if (topSortItem.count == 0)
+                    return;
+                var match = topSortItem.Match(l, r);
+                if (match != MatchResult.None)
+                {
+                    if (match == MatchResult.Brown)
+                        return;
+                    var node = UFNode.CreateNew(match == MatchResult.Black ? Color.Black : Color.Red,
+                        topSortItem.count);
+                    if (parentNode != null && parentNode.color == node.color)
+                        parentNode.Union(node);
+                    else if (parentNode != null)
+                        links.Add(new Link {n1 = parentNode, n2 = node});
+                    else if (node.color == Color.Red)
+                        roots.Add(node);
+                    return;
+                }
+                var adjacent = outgoing[parent];
+                UFNode blackNode = null;
+                UFNode redNode = null;
+                foreach (var e in adjacent)
+                {
+                    var edge = edges[e];
+                    UFNode childNode;
+                    if (edge.weight > r)
+                        childNode = null;
+                    else
+                    {
+                        if (e == parentEdge)
+                        {
+                            if (parentNode == null)
+                                throw new InvalidOperationException("assertion failure");
+                            childNode = parentNode;
+                        }
+                        else
+                            childNode = UFNode.CreateNew(edge.weight < l ? Color.Black : Color.Red, 1);
+                        if (childNode.color == Color.Red)
+                        {
+                            if (redNode == null)
+                                redNode = childNode;
+                            else
+                                redNode.Union(childNode);
+                        }
+                        else if (blackNode == null)
+                            blackNode = childNode;
+                        else
+                            blackNode.Union(childNode);
+                    }
+                    if (e != parentEdge)
+                        Visit(parent == edge.v1 ? edge.v2 : edge.v1, e, childNode);
+                }
+                if (blackNode != null && redNode != null)
+                    links.Add(new Link
+                    {
+                        n1 = blackNode,
+                        n2 = redNode
+                    });
+                if (parentNode == null && redNode != null)
+                    roots.Add(redNode);
+            }
+        }
+
+        private class CenterFinder
+        {
+            private readonly List<int>[] outgoing;
+            private readonly Edge[] edges;
+            private readonly int[] distances;
+
+            public CenterFinder(List<int>[] outgoing, Edge[] edges)
+            {
+                this.outgoing = outgoing;
+                this.edges = edges;
+                distances = new int[outgoing.Length];
+            }
+
+            public int Find()
+            {
+                DistanceDFS(0, -1);
+                var currentNode = 0;
+                var currentDistance = distances[currentNode];
+                while (true)
+                {
+                    var adjacent = outgoing[currentNode];
+                    var max = -1;
+                    var maxNode = -1;
+                    foreach (var t in adjacent)
+                    {
+                        var e = edges[t];
+                        var v = e.v1 == currentNode ? e.v2 : e.v1;
+                        if (distances[v] > max)
+                        {
+                            max = distances[v];
+                            maxNode = v;
+                        }
+                    }
+                    if (max < 0)
+                        break;
+                    var newResult = Math.Max(1 + currentDistance, max);
+                    if (newResult >= currentDistance)
+                        break;
+                    currentDistance = newResult;
+                    currentNode = maxNode;
+                }
+                return currentNode;
+            }
+
+            private int DistanceDFS(int parent, int parentEdge)
+            {
+                var adjacent = outgoing[parent];
+                var result = 0;
+                foreach (var t in adjacent)
+                {
+                    if (t == parentEdge)
+                        continue;
+                    var edge = edges[t];
+                    var childDistance = DistanceDFS(edge.v1 == parent ? edge.v2 : edge.v1, t) + 1;
+                    if (childDistance > result)
+                        result = childDistance;
+                }
+                return distances[parent] = result;
+            }
+        }
+
+        private class TopSorter
+        {
+            private readonly TopSortItem[] items;
+            private readonly List<int>[] outgoing;
+            private readonly Edge[] edges;
+
+            public TopSorter(TopSortItem[] items, List<int>[] outgoing, Edge[] edges)
+            {
+                this.items = items;
                 this.outgoing = outgoing;
                 this.edges = edges;
             }
 
-            public void TopSort()
+            public void TopSort(int root)
             {
-                var random = new Random();
-                var root = random.Next(descriptors.Length);
                 Visit(root, -1);
             }
 
             private void Visit(int parent, int grandParent)
             {
                 var adjacent = outgoing[parent];
-                var parentDescriptor = descriptors[parent] = new TopSortDescriptor
+                var parentDescriptor = items[parent] = new TopSortItem
                 {
                     max = -1,
+                    min = int.MaxValue,
                     count = 0
                 };
                 foreach (var x in adjacent)
@@ -379,23 +398,48 @@ namespace Algs.Tasks.DisjointSets
                     if (child == grandParent)
                         continue;
                     Visit(child, parent);
-                    var childDescriptor = descriptors[child];
+                    var childDescriptor = items[child];
                     var childMax = edge.weight > childDescriptor.max
                         ? edge.weight
                         : childDescriptor.max;
                     if (childMax > parentDescriptor.max)
                         parentDescriptor.max = childMax;
+                    var childMin = edge.weight < childDescriptor.min
+                        ? edge.weight
+                        : childDescriptor.min;
+                    if (childMin < parentDescriptor.min)
+                        parentDescriptor.min = childMin;
                     parentDescriptor.count += childDescriptor.count + 1;
                 }
-                parentDescriptor.number = lastNumber++;
             }
         }
 
-        private struct StackItem
+        private class TopSortItem
         {
-            public int v;
-            public Edge edge;
-            public UFNode node;
+            public int max;
+            public int min;
+            public uint count;
+
+            public MatchResult Match(int l, int r)
+            {
+                if (l > max)
+                    return MatchResult.Black;
+                if (l > min)
+                    return MatchResult.None;
+                if (r < min)
+                    return MatchResult.Brown;
+                if (r < max)
+                    return MatchResult.None;
+                return MatchResult.Red;
+            }
+        }
+
+        public enum MatchResult
+        {
+            None,
+            Black,
+            Red,
+            Brown
         }
     }
 }
