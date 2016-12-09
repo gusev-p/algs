@@ -6,16 +6,24 @@ namespace Algs.Core
     public class PriorityQueue<T>
     {
         private readonly Func<T, T, MostPriority> prioritizer;
-        public event Action<T, int> OnHandleChanged;
+        private readonly Action<T, int> onHandleChanged;
         private readonly T[] values;
 
-        public PriorityQueue(int maxItemsCount, Func<T, T, MostPriority> prioritizer)
+        public PriorityQueue(int maxItemsCount, Func<T, T, MostPriority> prioritizer,
+            Action<T, int> onHandleChanged = null)
+            : this(new T[maxItemsCount + 1], prioritizer, onHandleChanged)
         {
+        }
+
+        private PriorityQueue(T[] values, Func<T, T, MostPriority> prioritizer, Action<T, int> onHandleChanged)
+        {
+            this.values = values;
             this.prioritizer = prioritizer;
-            values = new T[maxItemsCount + 1];
+            this.onHandleChanged = onHandleChanged;
         }
 
-        public static PriorityQueue<T> Min(int maxItemsCount, IComparer<T> comparer = null)
+        public static PriorityQueue<T> Min(int maxItemsCount, IComparer<T> comparer = null,
+            Action<T, int> onHandleChanged = null)
         {
             comparer = comparer ?? Comparer<T>.Default;
             return new PriorityQueue<T>(maxItemsCount, delegate(T v1, T v2)
@@ -26,10 +34,11 @@ namespace Algs.Core
                 if (cmp > 0)
                     return MostPriority.Second;
                 return MostPriority.Both;
-            });
+            }, onHandleChanged);
         }
 
-        public static PriorityQueue<T> Max(int maxItemsCount, IComparer<T> comparer = null)
+        public static PriorityQueue<T> Max(int maxItemsCount, IComparer<T> comparer = null,
+            Action<T, int> onHandleChanged = null)
         {
             comparer = comparer ?? Comparer<T>.Default;
             return new PriorityQueue<T>(maxItemsCount, delegate(T v1, T v2)
@@ -40,7 +49,24 @@ namespace Algs.Core
                 if (cmp < 0)
                     return MostPriority.Second;
                 return MostPriority.Both;
-            });
+            }, onHandleChanged);
+        }
+
+        public static PriorityQueue<T> Create(T[] values, Func<T, T, MostPriority> prioritizer,
+            Action<T, int> onHandleChanged = null)
+        {
+            var heapValues = new T[values.Length + 1];
+            Array.Copy(values, 0, heapValues, 1, values.Length);
+            var result = new PriorityQueue<T>(heapValues, prioritizer, onHandleChanged)
+            {
+                Count = values.Length
+            };
+            if (onHandleChanged != null)
+                for (var i = 1; i < heapValues.Length; i++)
+                    onHandleChanged(heapValues[i], i);
+            for (var i = values.Length/2; i >= 1; i--)
+                result.HeapifyDown(i);
+            return result;
         }
 
         public int Count { get; private set; }
@@ -56,15 +82,7 @@ namespace Algs.Core
 
         public int Promote(int handle)
         {
-            var index = handle;
-            while (true)
-            {
-                var parentIndex = index >> 1;
-                if (parentIndex == 0 || Prioritize(index, parentIndex) != MostPriority.First)
-                    return index;
-                Exchange(parentIndex, index);
-                index = parentIndex;
-            }
+            return HeapifyUp(handle);
         }
 
         public T Top
@@ -78,7 +96,12 @@ namespace Algs.Core
             NotifyHandleChanged(result, -1);
             SetValue(1, values[Count]);
             Count--;
-            var index = 1;
+            HeapifyDown(1);
+            return result;
+        }
+
+        private void HeapifyDown(int index)
+        {
             while (true)
             {
                 var largestIndex = index;
@@ -93,7 +116,18 @@ namespace Algs.Core
                 Exchange(index, largestIndex);
                 index = largestIndex;
             }
-            return result;
+        }
+
+        private int HeapifyUp(int index)
+        {
+            while (true)
+            {
+                var parentIndex = index >> 1;
+                if (parentIndex == 0 || Prioritize(index, parentIndex) != MostPriority.First)
+                    return index;
+                Exchange(parentIndex, index);
+                index = parentIndex;
+            }
         }
 
         private void Exchange(int i, int j)
@@ -116,8 +150,8 @@ namespace Algs.Core
 
         private void NotifyHandleChanged(T value, int newHandle)
         {
-            if (OnHandleChanged != null)
-                OnHandleChanged(value, newHandle);
+            if (onHandleChanged != null)
+                onHandleChanged(value, newHandle);
         }
     }
 }

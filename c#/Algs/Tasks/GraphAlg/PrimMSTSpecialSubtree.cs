@@ -41,8 +41,8 @@ namespace Algs.Tasks.GraphAlg
                         if (distanceToMST[n1] > distanceToMST[n2])
                             return MostPriority.Second;
                         return MostPriority.Both;
-                    });
-                rest.OnHandleChanged += (node, i) => queueHandles[node] = i;
+                    },
+                    (node, i) => queueHandles[node] = i);
                 for (var i = 0; i < graph.NodesCount; i++)
                 {
                     distanceToMST[i] = i == startNode ? 0 : maxWeight + 1;

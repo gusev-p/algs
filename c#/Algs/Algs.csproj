@@ -64,6 +64,7 @@
     <Compile Include="Tasks\GraphAlg\BFSShortestReach.cs" />
     <Compile Include="Tasks\GraphAlg\ComponentsInAGraph.cs" />
     <Compile Include="Tasks\GraphAlg\CountLuck.cs" />
+    <Compile Include="Tasks\GraphAlg\DijkstraShortestPath.cs" />
     <Compile Include="Tasks\GraphAlg\KargerMinCut.cs" />
     <Compile Include="Tasks\GraphAlg\MaxRegionFinder.cs" />
     <Compile Include="Tasks\GraphAlg\PrimMSTSpecialSubtree.cs" />

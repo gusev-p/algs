@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.DisjointSets;
+﻿using Algs.Tasks.GraphAlg;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            SuperMaximumCostQueries.TaskMain();
+            DijkstraShortestPath.TaskMain();
         }
     }
 }
