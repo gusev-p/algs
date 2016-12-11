@@ -24,13 +24,13 @@ namespace Algs.Tasks.Heaps
             else if (minHeap.Count > maxHeap.Count + 1)
                 maxHeap.Insert(minHeap.ExtractTop());
             if (maxHeap.Count == minHeap.Count)
-                Median = ((double) minHeap.Top + maxHeap.Top)/2;
+                Median = maxHeap.Top;
             else if (maxHeap.Count > minHeap.Count)
                 Median = maxHeap.Top;
             else
                 Median = minHeap.Top;
         }
 
-        public double Median { get; private set; }
+        public int Median { get; private set; }
     }
 }
