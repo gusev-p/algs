@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Heaps;
+﻿using Algs.Tasks.Tree;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            MedianMaintenance.TaskMain();
+            SwapNodes.TaskMain();
         }
     }
 }

@@ -101,8 +101,10 @@
     <Compile Include="Tasks\Strings\SimilarStringsTask.cs" />
     <Compile Include="Tasks\Strings\StringConstructionTask.cs" />
     <Compile Include="Core\AVLTree.cs" />
+    <Compile Include="Tasks\Tree\SwapNodes.cs" />
     <Compile Include="Tasks\Tries\Trie.cs" />
     <Compile Include="Tests\Core\ArrayHelpersTest.cs" />
+    <Compile Include="Tests\Core\RBTreeNoParentsTest.cs" />
     <Compile Include="Tests\Core\RBTreeTest.cs" />
     <Compile Include="Tests\Tasks\MedianCounterTest.cs" />
     <Compile Include="Tests\Tasks\MergeSortTest.cs" />
