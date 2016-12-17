@@ -11,3 +11,6 @@ packages/
 *.Designer.cs
 **/input
 **/*.class
+cpp/prog.exe
+cpp/prog.obj
+cpp/output
