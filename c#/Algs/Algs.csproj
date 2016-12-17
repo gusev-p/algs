@@ -91,6 +91,7 @@
     <Compile Include="Tasks\Sorting\MergeSorter.cs" />
     <Compile Include="Tasks\Sorting\QuickSorter.cs" />
     <Compile Include="Tasks\Sorting\QuickSorter2.cs" />
+    <Compile Include="Tasks\Sorting\RunningTimeOfQuicksort.cs" />
     <Compile Include="Tasks\Sorting\SortedArray.cs" />
     <Compile Include="Tasks\Stacks\BracketsChecker.cs" />
     <Compile Include="Tasks\Strings\AnagramFinder.cs" />

@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Tree;
+﻿using Algs.Tasks.Sorting;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            SwapNodes.TaskMain();
+            RunningTimeOfQuicksort.TaskMain();
         }
     }
 }
