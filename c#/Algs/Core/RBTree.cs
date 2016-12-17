@@ -1,31 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NUnit.Framework;
 
 namespace Algs.Core
 {
+    //Реализация RBTree на узлах со ссылками на родителя.
+    //Как в CLRS, только с заинлайненными вращениями.
+    //Почему-то быстрее оказывается, чем однопроходная версия, 
     public class RBTree
     {
         private Node root = nil;
 
+        public int GetValue(int key)
+        {
+            int value;
+            if (!TryGetValue(key, out value))
+            {
+                const string messageFormat = "key [{0}] not found";
+                throw new InvalidOperationException(string.Format(messageFormat, key));
+            }
+            return value;
+        }
+
         public bool TryGetValue(int key, out int value)
         {
-            for (var x = root; x != nil; x = key < x.key ? x.left : x.right)
-                if (x.key == key)
-                {
-                    value = x.value;
-                    return true;
-                }
+            var n = FindNode(key);
+            if (n != null)
+            {
+                value = n.value;
+                return true;
+            }
             value = 0;
             return false;
         }
 
-        public string Dump()
+        public void Add(int key, int value)
         {
-            return TreeDumper.Dump(root);
+            if (!TryAdd(key, value))
+            {
+                const string messageFormat = "key [{0}] already exist";
+                throw new InvalidOperationException(string.Format(messageFormat, key));
+            }
         }
 
-        public void Add(int key, int value)
+        public bool TryAdd(int key, int value)
         {
             var newNode = new Node
             {
@@ -41,17 +60,14 @@ namespace Algs.Core
                 root = newNode;
                 root.color = Color.Black;
                 root.parent = nil;
-                return;
+                return true;
             }
             var x = root;
             Node p;
             do
             {
                 if (x.key == key)
-                {
-                    const string messageFormat = "key [{0}] already exist";
-                    throw new InvalidOperationException(string.Format(messageFormat, key));
-                }
+                    return false;
                 p = x;
                 x = key < x.key ? x.left : x.right;
             } while (x != nil);
@@ -171,11 +187,228 @@ namespace Algs.Core
                 }
             }
             root.color = Color.Black;
+            return true;
+        }
+
+        public int this[int key]
+        {
+            get { return GetValue(key); }
+            set
+            {
+                var n = FindNode(key);
+                if (n != null)
+                    n.value = value;
+                else
+                    Add(key, value);
+            }
+        }
+
+        public void Remove(int key)
+        {
+            if (!TryRemove(key))
+            {
+                const string mesageFormat = "key [{0}] not found";
+                throw new InvalidOperationException(string.Format(mesageFormat, key));
+            }
+        }
+
+        public bool TryRemove(int key)
+        {
+            var y = FindNode(key);
+            if (y == null)
+                return false;
+            if (y.left != nil && y.right != nil)
+            {
+                var original = y;
+                y = y.right;
+                while (y.left != nil)
+                    y = y.left;
+                original.key = y.key;
+                original.value = y.value;
+            }
+            var x = y.left == nil ? y.right : y.left;
+            if (x != nil)
+                x.parent = y.parent;
+            if (y.parent == nil)
+                root = x;
+            else if (y == y.parent.left)
+                y.parent.left = x;
+            else
+                y.parent.right = x;
+            Count--;
+            if (y.color == Color.Red)
+                return true;
+            var p = y.parent;
+            while (x != root && x.color != Color.Red)
+            {
+                if (x == p.left)
+                {
+                    var w = p.right;
+                    if (w.color == Color.Red)
+                    {
+                        p.right = w.left;
+                        if (p.right != nil)
+                            p.right.parent = p;
+                        w.left = p;
+                        w.parent = p.parent;
+                        if (p.parent == nil)
+                            root = w;
+                        else if (p == p.parent.left)
+                            w.parent.left = w;
+                        else
+                            w.parent.right = w;
+                        p.parent = w;
+                        w.color = Color.Black;
+                        p.color = Color.Red;
+                        w = p.right;
+                    }
+                    if (w.left.color == Color.Black && w.right.color == Color.Black)
+                    {
+                        w.color = Color.Red;
+                        x = p;
+                        p = x.parent;
+                    }
+                    else
+                    {
+                        if (w.right.color == Color.Black)
+                        {
+                            var a = w.left;
+                            w.left = a.right;
+                            if (w.left != nil)
+                                w.left.parent = w;
+                            a.parent = p;
+                            a.right = w;
+                            w.parent = a;
+                            a.color = Color.Black;
+                            w.color = Color.Red;
+                            w = a;
+                        }
+                        p.right = w.left;
+                        if (p.right != nil)
+                            p.right.parent = p;
+                        w.left = p;
+                        w.parent = p.parent;
+                        if (p.parent == nil)
+                            root = w;
+                        else if (p == p.parent.left)
+                            w.parent.left = w;
+                        else
+                            w.parent.right = w;
+                        p.parent = w;
+                        w.color = p.color;
+                        p.color = Color.Black;
+                        w.right.color = Color.Black;
+                        break;
+                    }
+                }
+                else
+                {
+                    var w = p.left;
+                    if (w.color == Color.Red)
+                    {
+                        p.left = w.right;
+                        if (p.left != nil)
+                            p.left.parent = p;
+                        w.right = p;
+                        w.parent = p.parent;
+                        if (p.parent == nil)
+                            root = w;
+                        else if (p == p.parent.left)
+                            w.parent.left = w;
+                        else
+                            w.parent.right = w;
+                        p.parent = w;
+                        w.color = Color.Black;
+                        p.color = Color.Red;
+                        w = p.left;
+                    }
+                    if (w.left.color == Color.Black && w.right.color == Color.Black)
+                    {
+                        w.color = Color.Red;
+                        x = p;
+                        p = x.parent;
+                    }
+                    else
+                    {
+                        if (w.left.color == Color.Black)
+                        {
+                            var b = w.right;
+                            w.right = b.left;
+                            if (w.right != nil)
+                                w.right.parent = w;
+                            w.parent = b;
+                            b.left = w;
+                            b.parent = p;
+                            w.color = Color.Red;
+                            b.color = Color.Black;
+                            w = b;
+                        }
+                        p.left = w.right;
+                        if (p.left != nil)
+                            p.left.parent = p;
+                        w.right = p;
+                        w.parent = p.parent;
+                        if (p.parent == nil)
+                            root = w;
+                        else if (p == p.parent.left)
+                            w.parent.left = w;
+                        else
+                            w.parent.right = w;
+                        p.parent = w;
+                        w.color = p.color;
+                        p.color = Color.Black;
+                        w.left.color = Color.Black;
+                        break;
+                    }
+                }
+            }
+            x.color = Color.Black;
+            return true;
+        }
+
+        public string Dump()
+        {
+            return TreeDumper.Dump(root);
         }
 
         public int GetHeight()
         {
             return root == nil ? 0 : GetHeight(root);
+        }
+
+        public void Check()
+        {
+            Check(root);
+        }
+
+        private static int Check(Node n)
+        {
+            if (n == nil)
+            {
+                Assert.That(n.color, Is.EqualTo(Color.Black));
+                Assert.That(n.left, Is.Null);
+                Assert.That(n.right, Is.Null);
+                Assert.That(n.parent, Is.Null);
+                Assert.That(n.key, Is.EqualTo(0));
+                Assert.That(n.value, Is.EqualTo(0));
+                return 1;
+            }
+            if (n.left != nil && n.left.key >= n.key)
+                Assert.Fail("BST violation for left child of " + n.key);
+            if (n.right != nil && n.right.key <= n.key)
+                Assert.Fail("BST violation for right child of " + n.key);
+            if (n.color == Color.Red)
+            {
+                if(n.left.color == Color.Red)
+                    Assert.Fail("red constraint violation for left child of " + n.key);
+                if (n.right.color == Color.Red)
+                    Assert.Fail("red constraint violation for right child of " + n.key);
+            }
+            var leftBlackHeight = Check(n.left);
+            var rightBlackHeight = Check(n.right);
+            if (leftBlackHeight != rightBlackHeight)
+                Assert.Fail("black constraint violation for " + n.key);
+            return (n.color == Color.Black ? 1 : 0) + leftBlackHeight;
         }
 
         private static int GetHeight(Node n)
@@ -204,6 +437,14 @@ namespace Algs.Core
         {
             color = Color.Black
         };
+
+        private Node FindNode(int key)
+        {
+            for (var x = root; x != nil; x = key < x.key ? x.left : x.right)
+                if (x.key == key)
+                    return x;
+            return null;
+        }
 
         private class Node
         {
