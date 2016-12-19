@@ -73,6 +73,7 @@
     <Compile Include="Tasks\GraphAlg\Scc.cs" />
     <Compile Include="Tasks\Graphics\ClosestsPointersFinder.cs" />
     <Compile Include="Tasks\Graphics\Point.cs" />
+    <Compile Include="Tasks\Hashtables\Sum2.cs" />
     <Compile Include="Tasks\Heaps\JesseAndCookies.cs" />
     <Compile Include="Tasks\Heaps\MedianCounter.cs" />
     <Compile Include="Tasks\Heaps\MinimumAverageWaitingTime.cs" />

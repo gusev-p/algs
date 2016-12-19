@@ -1,4 +1,4 @@
-﻿using Algs.Tasks.Sorting;
+﻿using Algs.Tasks.Hashtables;
 
 namespace Algs
 {
@@ -6,7 +6,7 @@ namespace Algs
     {
         public static void Main(string[] args)
         {
-            RunningTimeOfQuicksort.TaskMain();
+            Sum2.TaskMain();
         }
     }
 }

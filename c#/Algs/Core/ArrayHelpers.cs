@@ -44,6 +44,46 @@ namespace Algs.Core
             return result;
         }
 
+        public static int FindFirstGreaterOrEqual(long[] array, long target)
+        {
+            var left = 0;
+            var right = array.Length - 1;
+            var result = -1;
+            while (left <= right)
+            {
+                var mid = left + (right - left)/2;
+                var midValue = array[mid];
+                if (target <= midValue)
+                {
+                    right = mid - 1;
+                    result = mid;
+                }
+                else
+                    left = mid + 1;
+            }
+            return result;
+        }
+
+        public static int FindLastSmallerOrEqual(long[] array, long target)
+        {
+            var left = 0;
+            var right = array.Length - 1;
+            var result = -1;
+            while (left <= right)
+            {
+                var mid = left + (right - left)/2;
+                var midValue = array[mid];
+                if (target < midValue)
+                    right = mid - 1;
+                else
+                {
+                    result = mid;
+                    left = mid + 1;
+                }
+            }
+            return result;
+        }
+
         public static int BinarySearch<T>(this T[] array, T item,
             Occurence occurence = Occurence.First,
             IComparer<T> comparer = null)
