@@ -1,12 +1,12 @@
-﻿using Algs.Tasks.Hashtables;
+﻿using Algs.Tasks.GraphAlg;
 
 namespace Algs
 {
-    public class Solution
+    public class Program
     {
         public static void Main(string[] args)
         {
-            Sum2.TaskMain();
+            PrimMSTSpecialSubtree.TaskMain();
         }
     }
 }

@@ -16,10 +16,40 @@ namespace Algs.Tests.Tasks
     public class ShitTest
     {
         [Test]
-        public void Shit2()
+        public void Task1()
         {
-            Console.Out.WriteLine(123.ToString()[0]);
-            
+            var lines = File.ReadLines(@"C:\sources\Algs\c#\Algs\bin\Debug\_642c2ce8f3abe387bdff636d708cdb26_jobs.txt")
+                .Skip(1)
+                .Select(x => x.Split(' '))
+                .Select(x => new {weight = int.Parse(x[0]), length = int.Parse(x[1])})
+                .OrderByDescending(x => x.weight - x.length)
+                .ThenByDescending(x => x.weight);
+            long completionTime = 0;
+            long result = 0;
+            foreach (var line in lines)
+            {
+                completionTime += line.length;
+                result += completionTime*line.weight;
+            }
+            Console.Out.WriteLine(result);
+        }
+
+        [Test]
+        public void Task2()
+        {
+            var lines = File.ReadLines(@"C:\sources\Algs\c#\Algs\bin\Debug\_642c2ce8f3abe387bdff636d708cdb26_jobs.txt")
+                .Skip(1)
+                .Select(x => x.Split(' '))
+                .Select(x => new {weight = int.Parse(x[0]), length = int.Parse(x[1])})
+                .OrderByDescending(x => (double) x.weight/x.length);
+            long completionTime = 0;
+            long result = 0;
+            foreach (var line in lines)
+            {
+                completionTime += line.length;
+                result += completionTime*line.weight;
+            }
+            Console.Out.WriteLine(result);
         }
 
         [Test]
