@@ -77,18 +77,10 @@ namespace Algs.Core
                 throw new InvalidOperationException("overflow");
             Count++;
             SetValue(Count, value);
-            Promote(Count);
+            HeapifyUp(Count);
         }
 
-        public int Promote(int handle)
-        {
-            return HeapifyUp(handle);
-        }
-
-        public T Top
-        {
-            get { return values[1]; }
-        }
+        public T Top => values[1];
 
         public T ExtractTop()
         {
@@ -100,7 +92,20 @@ namespace Algs.Core
             return result;
         }
 
-        private void HeapifyDown(int index)
+        public void Delete(int handle)
+        {
+            var oldValue = values[handle];
+            NotifyHandleChanged(oldValue, -1);
+            SetValue(handle, values[Count]);
+            Count--;
+            var prioritization = prioritizer(values[handle], oldValue);
+            if (prioritization == MostPriority.First)
+                HeapifyUp(handle);
+            else if(prioritization == MostPriority.Second)
+                HeapifyDown(handle); 
+        }
+
+        public void HeapifyDown(int index)
         {
             while (true)
             {
@@ -118,13 +123,13 @@ namespace Algs.Core
             }
         }
 
-        private int HeapifyUp(int index)
+        public void HeapifyUp(int index)
         {
             while (true)
             {
                 var parentIndex = index >> 1;
                 if (parentIndex == 0 || Prioritize(index, parentIndex) != MostPriority.First)
-                    return index;
+                    return;
                 Exchange(parentIndex, index);
                 index = parentIndex;
             }
@@ -150,8 +155,7 @@ namespace Algs.Core
 
         private void NotifyHandleChanged(T value, int newHandle)
         {
-            if (onHandleChanged != null)
-                onHandleChanged(value, newHandle);
+            onHandleChanged?.Invoke(value, newHandle);
         }
     }
 }

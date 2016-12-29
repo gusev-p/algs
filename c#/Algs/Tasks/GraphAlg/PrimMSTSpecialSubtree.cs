@@ -62,7 +62,7 @@ namespace Algs.Tasks.GraphAlg
                         if (v.weight < distanceToMST[v.node])
                         {
                             distanceToMST[v.node] = v.weight;
-                            rest.Promote(queueHandle);
+                            rest.HeapifyUp(queueHandle);
                         }
                     }
                 }

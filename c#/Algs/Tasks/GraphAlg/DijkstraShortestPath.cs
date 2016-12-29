@@ -77,7 +77,7 @@ namespace Algs.Tasks.GraphAlg
                     if (newKey < heapItems[edge.v].key)
                     {
                         heapItems[edge.v].key = newKey;
-                        heap.Promote(heapItems[edge.v].handle);
+                        heap.HeapifyUp(heapItems[edge.v].handle);
                     }
                 }
             }

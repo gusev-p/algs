@@ -69,6 +69,8 @@
     <Compile Include="Tasks\GraphAlg\DijkstraShortestPath.cs" />
     <Compile Include="Tasks\GraphAlg\KargerMinCut.cs" />
     <Compile Include="Tasks\GraphAlg\MaxRegionFinder.cs" />
+    <Compile Include="Tasks\GraphAlg\MaxSpacingClustering.cs" />
+    <Compile Include="Tasks\GraphAlg\MaxSpacingClusteringBig.cs" />
     <Compile Include="Tasks\GraphAlg\PrimMSTSpecialSubtree.cs" />
     <Compile Include="Tasks\GraphAlg\Scc.cs" />
     <Compile Include="Tasks\Graphics\ClosestsPointersFinder.cs" />
