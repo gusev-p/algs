@@ -14,3 +14,4 @@ packages/
 cpp/prog.exe
 cpp/prog.obj
 cpp/output
+**/.idea
