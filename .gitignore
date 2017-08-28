@@ -6,6 +6,7 @@ bin/
 bin.tests/
 obj/
 packages/
+cmake-build-debug/
 *.nupkg
 *.designer.cs
 *.Designer.cs
