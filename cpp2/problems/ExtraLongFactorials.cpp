@@ -74,7 +74,7 @@ TBigInt Factorial(int v) {
     return result;
 }
 
-int main() {
+int __main() {
     int v;
     cin >> v;
     cout << Factorial(v) << endl;
