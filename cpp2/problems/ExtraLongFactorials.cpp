@@ -74,9 +74,11 @@ TBigInt Factorial(int v) {
     return result;
 }
 
-int __main() {
-    int v;
-    cin >> v;
-    cout << Factorial(v) << endl;
-    return 0;
+namespace {
+    int main() {
+        int v;
+        cin >> v;
+        cout << Factorial(v) << endl;
+        return 0;
+    }
 }
