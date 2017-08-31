@@ -10,5 +10,9 @@ set(SOURCE_FILES
         problems/OrganizingContainersOfBalls.cpp
         problems/Encryption.cpp
         problems/Pairs.cpp
+        problems/HackerlandRadioTransmitters.cpp
+        problems/Lcs.cpp
+        common/common.cpp
 )
+include_directories(${PROJECT_SOURCE_DIR})
 add_executable(cpp2 ${SOURCE_FILES})

@@ -53,32 +53,37 @@ private:
     int Count = 0;
 };
 
-int main() {
-    int n, k;
-    cin >> n >> k;
-    vector<int> numbers(static_cast<size_t>(n));
-    for (size_t i = 0; i < n; ++i) {
-        cin >> numbers[i];
+namespace {
+    int main() {
+//        std::ifstream in("input");
+//        std::cin.rdbuf(in.rdbuf());
+
+        int n, k;
+        cin >> n >> k;
+        vector<int> numbers(static_cast<size_t>(n));
+        for (size_t i = 0; i < n; ++i) {
+            cin >> numbers[i];
+        }
+        sort(numbers.begin(), numbers.end());
+        int result = 0;
+        UniqueIterator left(numbers);
+        UniqueIterator right(numbers);
+        while (right.HasValue()) {
+            if (!left.Before(right)) {
+                right.MoveAfter(left);
+                continue;
+            }
+            const int diff = right.GetValue() - left.GetValue();
+            if (diff < k) {
+                right.Move();
+                continue;
+            }
+            if (diff == k) {
+                result += left.GetCount() * right.GetCount();
+            }
+            left.Move();
+        }
+        cout << result << endl;
+        return 0;
     }
-    sort(numbers.begin(), numbers.end());
-    int result = 0;
-    UniqueIterator left(numbers);
-    UniqueIterator right(numbers);
-    while(right.HasValue()) {
-        if (!left.Before(right)) {
-            right.MoveAfter(left);
-            continue;
-        }
-        const int diff = right.GetValue() - left.GetValue();
-        if (diff < k) {
-            right.Move();
-            continue;
-        }
-        if (diff == k) {
-            result += left.GetCount() * right.GetCount();
-        }
-        left.Move();
-    }
-    cout << result << endl;
-    return 0;
 }
