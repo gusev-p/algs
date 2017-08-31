@@ -46,28 +46,30 @@ const Position Shifts[] {
     {1, -1},
 };
 
-int main() {
-    int n, k;
-    cin >> n >> k;
-    Position queenPosition{};
-    cin >> queenPosition.Row >> queenPosition.Column;
-    unordered_set<Position> obstacles;
-    for (size_t i = 0; i < k; ++i) {
-        int r, c;
-        cin >> r >> c;
-        obstacles.insert({r, c});
-    }
-    unsigned long long result = 0;
-    for (const Position &shift : Shifts) {
-        Position currentPosition = queenPosition;
-        while(true) {
-            currentPosition += shift;
-            if (currentPosition.OutOfBoard(n) || obstacles.find(currentPosition) != obstacles.end()) {
-                break;
-            }
-            ++result;
+namespace {
+    int main() {
+        int n, k;
+        cin >> n >> k;
+        Position queenPosition{};
+        cin >> queenPosition.Row >> queenPosition.Column;
+        unordered_set<Position> obstacles;
+        for (size_t i = 0; i < k; ++i) {
+            int r, c;
+            cin >> r >> c;
+            obstacles.insert({r, c});
         }
+        unsigned long long result = 0;
+        for (const Position &shift : Shifts) {
+            Position currentPosition = queenPosition;
+            while(true) {
+                currentPosition += shift;
+                if (currentPosition.OutOfBoard(n) || obstacles.find(currentPosition) != obstacles.end()) {
+                    break;
+                }
+                ++result;
+            }
+        }
+        cout << result << endl;
+        return 0;
     }
-    cout << result << endl;
-    return 0;
 }
